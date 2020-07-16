@@ -1,3 +1,8 @@
 **/__pycache__
 .coverage 
 .idea
+
+dist
+build
+yourbase.egg-info
+yourbase_plugin
