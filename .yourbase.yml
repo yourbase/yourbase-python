@@ -1,0 +1,24 @@
+dependencies:
+  build:
+    - python:3.8.2
+
+build_targets:
+  - name: release
+    commands:
+      - python3 -m pip install --user --upgrade setuptools wheel twine
+      - python3 setup.py sdist bdist_wheel
+      - python3 -m twine upload --non-interactive dist/*
+  - name: demo
+    commands:
+      - python demo.py
+  - name: test
+    commands:
+      - echo "No tests yet!"
+
+ci:
+  builds:
+    - name: release
+      build_target: release
+      when: tagged IS true
+    - name: test
+      build_target: test
