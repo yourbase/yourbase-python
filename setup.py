@@ -19,6 +19,10 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Software Development :: Testing",
+        "Framework :: Pytest",
     ],
     python_requires=">=3.6",
+    install_requires=["coverage"],
+    # Register hooks with pytest:
+    entry_points={"pytest11": ["yourbase = yourbase.pytest"]},
 )

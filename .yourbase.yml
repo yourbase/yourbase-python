@@ -11,14 +11,33 @@ build_targets:
   - name: demo
     commands:
       - python demo.py
-  - name: test
+  - name: lint
     commands:
-      - echo "No tests yet!"
+      - pip install black
+      - black --check .
+  # For integration tests to work locally, you must have access to the
+  # proprietary yourbase-python-engine code, and it must be a sibling directory
+  # to yourbase-python.
+  - name: integration
+    commands:
+      - yb build integration_standard
+      - yb build integration_pytest
+    host_only: true
+  - name: integration_standard
+    commands:
+      - pip install -r tests/integration/requirements.txt
+      - python tests/integration/app.py
+    host_only: true
+  - name: integration_pytest
+    commands:
+      - pip install -r tests/integration/pytest/requirements.txt
+      - pytest -s tests/integration/pytest/app.py
+    host_only: true
 
 ci:
   builds:
     - name: release
       build_target: release
       when: tagged IS true
-    - name: test
-      build_target: test
+    - name: lint
+      build_target: lint
