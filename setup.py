@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yourbase",
-    version="0.0.2",
+    version="0.0.3",
     author="YourBase",
     author_email="ben@yourbase.io",
     description="Test acceleration usable in the YourBase CI",
