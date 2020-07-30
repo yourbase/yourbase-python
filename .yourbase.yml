@@ -43,3 +43,5 @@ ci:
       when: tagged IS true
     - name: lint
       build_target: lint
+    - name: integration
+      build_target: integration
