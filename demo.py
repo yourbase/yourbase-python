@@ -1,5 +1,6 @@
 from yourbase import accelerate_tests
 
+
 @accelerate_tests()
 class TestApplication:
     def __init__(self):
@@ -10,7 +11,6 @@ class TestApplication:
 
     def test_bailout(self, message):
         print("Test message: %s" % (message))
-
 
 
 x = TestApplication()

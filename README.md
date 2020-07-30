@@ -20,14 +20,42 @@ on the YourBase runtime dependency graph.
 Simply run
 ```python
 pip install yourbase
+pip freeze > requirements.txt
 ```
-and decorate your tests with `@accelerate_tests`:
+
+If you use [pytest][pytest] for testing, you're done! YourBase will attach to
+pytest hooks on its own. If you're using a different testing framework, you
+will need to decorate your tests with `@accelerate_tests()`:
 ```python
-@accelerate_tests
+from yourbase import accelerate_tests
+
+# ...
+
+@accelerate_tests()
 class TestApplication:
     # ...
 ```
 
-When you run your tests locally it will have no impact at all, other than
-notifying that it won't accelerate your tests. When you run your tests in the
-YourBase CI, they will be accelerated where possible.
+In both situations, when you run your tests locally it will have no impact at
+all other than printing that it won't accelerate your tests. When you run
+your tests in the YourBase CI, they will be accelerated where possible.
+
+[pytest]: https://pytest.org
+
+## Local development
+This open source package is a lightweight wrapper for your code that plugs it
+into the more complex proprietary systems powering YourBase CI servers. We
+welcome contributions to this wrapper, but at this time we have not built
+shims or mocks to allow it to be tested front to back outside our systems.
+
+### Code style
+We use [Black][black] for code formatting, which is similar in personality to
+`gofmt` -- ruthless consistency, no configuration. Your build **will not pass
+CI** if the Black run doesn't come back clean, so we recommend you have your
+editor automatically run it on save. You can run it manually with
+
+```sh
+black .
+```
+
+[black]: https://pypi.org/project/black/
