@@ -23,9 +23,9 @@ CTX = None
 ENABLED = False
 PLUGIN = None
 
-import yourbase_plugin
 
 if yourbase_plugin.AVAILABLE:
+    import yourbase_plugin
     try:
         ENABLED = True
         from coverage.control import Plugins
