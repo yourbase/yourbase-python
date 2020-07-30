@@ -19,9 +19,11 @@ build_targets:
   # proprietary yourbase-python-engine code, and it must be a sibling directory
   # to yourbase-python.
   - name: integration
+    build_after:
+      - integration_standard
+      - integration_pytest
     commands:
-      - yb build integration_standard
-      - yb build integration_pytest
+      - echo "Integration tests succeeded!"
     host_only: true
   - name: integration_standard
     commands:

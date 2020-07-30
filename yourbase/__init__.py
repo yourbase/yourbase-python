@@ -23,10 +23,9 @@ CTX = None
 ENABLED = False
 PLUGIN = None
 
-
-if yourbase_plugin.AVAILABLE:
+try:
     import yourbase_plugin
-    try:
+    if yourbase_plugin.AVAILABLE:
         ENABLED = True
         from coverage.control import Plugins
         from coverage import Coverage
@@ -45,12 +44,12 @@ if yourbase_plugin.AVAILABLE:
         p = CTX._plugins
         PLUGIN = p.get("yourbase_plugin.YourBasePlugin")
 
-    except:
-        import traceback
+except:
+    import traceback
 
-        print("[YB] Problem initializing acceleration subsystem")
-        ENABLED = False
-        traceback.print_exc()
+    print("[YB] Problem initializing acceleration subsystem")
+    ENABLED = False
+    traceback.print_exc()
 
 
 def shutdown_acceleration(self, *args, **kwargs):
