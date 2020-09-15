@@ -7,6 +7,8 @@
 # For projects not using pytest, or when running outside of the YourBase CI,
 # this file does nothing.
 
+import inspect
+import os
 import yourbase
 
 
@@ -17,10 +19,28 @@ if yourbase.ENABLED:
         print("[YB] pytest found, attaching")
         from . import skip_when_possible
 
-        @pytest.hookimpl(tryfirst=True)
-        def pytest_collection_modifyitems(session, config, items):
-            for item in items:
-                item.function.function = skip_when_possible(item.function)
+        def pytest_runtest_setup(item: pytest.Item):
+            if yourbase.PLUGIN is None:
+                return
+
+            fname = "%s" % (item.function.__qualname__)
+            fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
+
+            if yourbase.PLUGIN.can_skip(fpath, fname):
+                items[i].add_marker(
+                    pytest.mark.skip(reason="[YB] No dependencies changed ✨")
+                )
+            else:
+                yourbase.PLUGIN.start_test(fname, fpath)
+
+        def pytest_runtest_teardown(item: pytest.Item):
+            if yourbase.PLUGIN is None:
+                return
+
+            fname = "%s" % (item.function.__qualname__)
+            fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
+
+            yourbase.PLUGIN.end_test(fname, fpath)
 
     except ModuleNotFoundError:
         print(

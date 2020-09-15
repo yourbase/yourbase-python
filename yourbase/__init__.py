@@ -25,6 +25,7 @@ PLUGIN = None
 
 try:
     import yourbase_plugin
+
     if yourbase_plugin.AVAILABLE:
         ENABLED = True
         from coverage.control import Plugins
