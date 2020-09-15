@@ -27,7 +27,7 @@ if yourbase.ENABLED:
             fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
 
             if yourbase.PLUGIN.can_skip(fpath, fname):
-                items[i].add_marker(
+                item.add_marker(
                     pytest.mark.skip(reason="[YB] No dependencies changed ✨")
                 )
             else:
