@@ -34,7 +34,8 @@ build_targets:
   - name: integration_pytest
     commands:
       - pip install -r tests/integration/pytest/requirements.txt
-      - pytest -s tests/integration/pytest/app.py
+      - pytest -rsfE -s tests/integration/pytest/app.py
+    host_only: true
   - name: integration_unittest
     commands:
       - pip install -r tests/integration/unittest/requirements.txt

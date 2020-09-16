@@ -11,6 +11,7 @@ import inspect
 import os
 import yourbase
 
+from typing import List
 
 if yourbase.ENABLED:
     try:
@@ -19,6 +20,19 @@ if yourbase.ENABLED:
         print("[YB] pytest found, attaching")
         from . import skip_when_possible
 
+        def pytest_collection_modifyitems(items: List[pytest.Item]):
+            if yourbase.PLUGIN is None:
+                return
+
+            for item in items:
+                fname = "%s" % (item.function.__qualname__)
+                fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
+
+                if yourbase.PLUGIN.can_skip(fpath, fname):
+                    item.add_marker(
+                        pytest.mark.skip(reason="[YB] No dependencies changed ✨")
+                    )
+
         def pytest_runtest_setup(item: pytest.Item):
             if yourbase.PLUGIN is None:
                 return
@@ -26,12 +40,7 @@ if yourbase.ENABLED:
             fname = "%s" % (item.function.__qualname__)
             fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
 
-            if yourbase.PLUGIN.can_skip(fpath, fname):
-                item.add_marker(
-                    pytest.mark.skip(reason="[YB] No dependencies changed ✨")
-                )
-            else:
-                yourbase.PLUGIN.start_test(fname, fpath)
+            yourbase.PLUGIN.start_test(fname, fpath)
 
         def pytest_runtest_teardown(item: pytest.Item):
             if yourbase.PLUGIN is None:
