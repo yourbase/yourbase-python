@@ -1,6 +1,9 @@
 import inspect
 import os
 
+import yourbase.unittest
+# yourbase.pytest does not need to be imported here; it is loaded via our
+# setup.py -> entry_points dict
 
 class YourBaseAccelerationConfig(object):
     """A fake config for use in tests."""

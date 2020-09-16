@@ -22,6 +22,7 @@ build_targets:
     build_after:
       - integration_standard
       - integration_pytest
+      - integration_unittest
     commands:
       - echo "Integration tests succeeded!"
     host_only: true
@@ -34,6 +35,10 @@ build_targets:
     commands:
       - pip install -r tests/integration/pytest/requirements.txt
       - pytest -s tests/integration/pytest/app.py
+  - name: integration_unittest
+    commands:
+      - pip install -r tests/integration/unittest/requirements.txt
+      - python -m unittest discover tests/integration/unittest
     host_only: true
 
 ci:

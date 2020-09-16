@@ -1,9 +1,3 @@
-# Use this from the top-level yourbase-python directory with
-#   pip install -r tests/integration/pytest/requirements.txt
-#   pytest tests/integration/pytest/app.py
- # This will install your local code for the yourbase-python and
- # yourbase-python-engine packages.
-
 pytest
  ./
  ../yourbase-python-engine

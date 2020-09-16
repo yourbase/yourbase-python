@@ -7,13 +7,14 @@ This is a Python package you can use in conjunction with [YourBase](https://your
 ## What does it do?
 
 YourBase has a unique test acceleration that records the execution of your
-tests and builds a dependency graph that it can use to bypass tests that do not
-need to be run based on the changes in a commit. This helps to make those
-commands much finer-grained enabling more acceleration. 
+tests, builds a dependency graph, and uses it to bypass tests that do not
+need to be run based on the changes in a commit. This Python package makes
+those commands much finer-grained for Python projects, enabling more
+acceleration.
 
 To achieve this, when running in the YourBase CI, this package will load a
-lighweight wrapper for Python that will determine if a test needs to run based
-on the YourBase runtime dependency graph. 
+lighweight wrapper for Python that will determine if a test needs to run
+based on the YourBase runtime dependency graph.
 
 ## How do I use this?
 
@@ -23,9 +24,20 @@ pip install yourbase
 pip freeze > requirements.txt
 ```
 
-If you use [pytest][pytest] for testing, you're done! YourBase will attach to
-pytest hooks on its own. If you're using a different testing framework, you
-will need to decorate your tests with `@accelerate_tests()`:
+YourBase supports [`pytest`][pytest] and [`unittest`][unittest].
+
+If you are using `pytest`, you're done!
+
+If you are using `unittest`, we have two integration options:
+
+#### Option 1
+Add `import yourbase` to the top of your testing files. You don't have to do
+anything else. This option is in early preview, so please open an issue if
+you encounter bugs with it.
+
+#### Option 2
+Decorate your tests with `@accelerate_tests`. This option is tried and true,
+but requires that you decorate each test individually, like so:
 ```python
 from yourbase import accelerate_tests
 
@@ -36,13 +48,18 @@ class TestApplication:
     # ...
 ```
 
-In both situations, when you run your tests locally it will have no impact at
-all other than printing that it won't accelerate your tests. When you run
-your tests in the YourBase CI, they will be accelerated where possible.
+If you are using another testing framework, please create an issue to let us
+know! We'd love to support it 🎈
+
+No matter your testing framework, after installation you will not be impacted
+locally other than seeing a message during testing that your tests will not
+be accelerated. When you run your tests in the YourBase CI, they will be
+accelerated.
 
 [pytest]: https://pytest.org
+[unittest]: https://docs.python.org/3/library/unittest.html
 
-## Local development
+## Contributing
 This open source package is a lightweight wrapper for your code that plugs it
 into the more complex proprietary systems powering YourBase CI servers. We
 welcome contributions to this wrapper, but at this time we have not built
