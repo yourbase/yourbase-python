@@ -7,6 +7,7 @@
 # For projects not using pytest, or when running outside of the YourBase CI,
 # this file does nothing.
 
+import atexit
 import inspect
 import os
 import yourbase
@@ -19,6 +20,8 @@ if yourbase.ENABLED:
 
         print("[YB] pytest found, attaching")
         from . import skip_when_possible
+
+        atexit.register(yourbase.shutdown_acceleration, None, None)
 
         def pytest_collection_modifyitems(items: List[pytest.Item]):
             if yourbase.PLUGIN is None:
