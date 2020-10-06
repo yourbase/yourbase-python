@@ -4,5 +4,6 @@
 
 dist
 build
+py_build_graph.yb
 yourbase.egg-info
 yourbase_plugin
