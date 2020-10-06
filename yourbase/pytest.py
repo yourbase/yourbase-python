@@ -43,7 +43,7 @@ if yourbase.ENABLED:
             fname = "%s" % (item.function.__qualname__)
             fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
 
-            yourbase.PLUGIN.start_test(fname, fpath)
+            yourbase.PLUGIN.start_test(fpath, fname)
 
         def pytest_runtest_teardown(item: pytest.Item):
             if yourbase.PLUGIN is None:
@@ -52,7 +52,7 @@ if yourbase.ENABLED:
             fname = "%s" % (item.function.__qualname__)
             fpath = os.getcwd() + os.sep + inspect.getfile(item.function)
 
-            yourbase.PLUGIN.end_test(fname, fpath)
+            yourbase.PLUGIN.end_test(fpath, fname)
 
     except ModuleNotFoundError:
         print(
