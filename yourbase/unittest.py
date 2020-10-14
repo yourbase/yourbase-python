@@ -8,9 +8,9 @@ def set_up(self: unittest.TestCase):
     if yourbase.PLUGIN is None:
         return
 
-    fname = self._testMethodName
+    fname: str = self._testMethodName
     fn = getattr(self, fname)
-    fpath = os.getcwd() + os.sep + inspect.getfile(fn)
+    fpath: str = os.getcwd() + os.sep + inspect.getfile(fn)
 
     if yourbase.PLUGIN.can_skip(fpath, fname):
         self.skipTest("[YB] No dependencies changed ✨")
@@ -22,11 +22,11 @@ def tear_down(self: unittest.TestCase):
     if yourbase.PLUGIN is None:
         return
 
-    fname = self._testMethodName
+    fname: str = self._testMethodName
     fn = getattr(self, fname)
-    fpath = os.getcwd() + os.sep + inspect.getfile(fn)
+    fpath: str = os.getcwd() + os.sep + inspect.getfile(fn)
 
-    yourbase.PLUGIN.end_test(fname, fpath)
+    yourbase.PLUGIN.end_test(fpath, fname)
 
 
 unittest.TestCase.setUp = set_up

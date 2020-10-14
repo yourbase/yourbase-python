@@ -55,7 +55,6 @@ except:
 
     print("[YB] Problem initializing acceleration subsystem")
     ENABLED = False
-    traceback.print_exc()
 
 
 def shutdown_acceleration(self, *args, **kwargs):
