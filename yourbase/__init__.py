@@ -1,3 +1,4 @@
+import atexit
 import inspect
 import os
 
@@ -28,6 +29,14 @@ CTX = None
 ENABLED = False
 PLUGIN = None
 
+
+def shutdown_acceleration(self, *args, **kwargs):
+    if CTX and PLUGIN:
+        print("[YB] Processing acceleration data")
+        PLUGIN.dump_graph()
+        CTX.stop()
+
+
 try:
     import yourbase_plugin
 
@@ -49,19 +58,10 @@ try:
         CTX.start()
         p = CTX._plugins
         PLUGIN = p.get("yourbase_plugin.YourBasePlugin")
+        atexit.register(shutdown_acceleration, None, None)
 
-except:
-    import traceback
-
-    print("[YB] Problem initializing acceleration subsystem")
-    ENABLED = False
-
-
-def shutdown_acceleration(self, *args, **kwargs):
-    if CTX and PLUGIN:
-        print("[YB] Processing acceleration data")
-        PLUGIN.dump_graph()
-        CTX.stop()
+except Exception as e:
+    print("[YB] Not running on YourBase CI, build won't be accelerated")
 
 
 def skip_when_possible(func):
