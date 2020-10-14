@@ -15,7 +15,7 @@ def set_up(self: unittest.TestCase):
     if yourbase.PLUGIN.can_skip(fpath, fname):
         self.skipTest("[YB] No dependencies changed ✨")
     else:
-        yourbase.PLUGIN.start_test(fname, fpath)
+        yourbase.PLUGIN.start_test(fpath, fname)
 
 
 def tear_down(self: unittest.TestCase):
