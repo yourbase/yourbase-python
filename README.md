@@ -28,25 +28,14 @@ YourBase supports [`pytest`][pytest] and [`unittest`][unittest].
 
 If you are using `pytest`, you're done!
 
-If you are using `unittest`, we have two integration options:
-
-#### Option 1
-Add `import yourbase` to the top of your testing files. You don't have to do
-anything else. This option is in early preview, so please open an issue if
-you encounter bugs with it.
-
-#### Option 2
-Decorate your tests with `@accelerate_tests`. This option is tried and true,
-but requires that you decorate each test individually, like so:
+If you are using `unittest`, just import `yourbase` before your tests start:
 ```python
-from yourbase import accelerate_tests
-
-# ...
-
-@accelerate_tests()
-class TestApplication:
-    # ...
+import yourbase
 ```
+It's not important exactly where, as long as it's before your tests run.
+Additionally, if your tests define `setUp` or `tearDown` methods on
+`unittest.TestCase` or a child class, be sure they are calling
+`super().setUp()` and `super().tearDown()` respectively.
 
 If you are using another testing framework, please create an issue to let us
 know! We'd love to support it 🎈

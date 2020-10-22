@@ -1,7 +1,18 @@
+import atexit
 import inspect
 import os
 
-import yourbase.unittest
+from logging import DEBUG, Formatter, getLogger, INFO, Logger, Handler, StreamHandler
+
+logger: Logger = getLogger("yourbase-python")
+handler: Handler = StreamHandler()
+handler.setFormatter(Formatter("[YB] %(message)s"))
+logger.addHandler(handler)
+
+if os.getenv("YB_DEBUG", "false") == "true":
+    logger.setLevel(DEBUG)
+else:
+    logger.setLevel(INFO)
 
 # yourbase.pytest does not need to be imported here; it is loaded via our
 # setup.py -> entry_points dict
@@ -28,12 +39,19 @@ CTX = None
 ENABLED = False
 PLUGIN = None
 
+
+def shutdown_acceleration(self, *args, **kwargs):
+    if CTX and PLUGIN:
+        logger.info("Processing acceleration data")
+        PLUGIN.dump_graph()
+        CTX.stop()
+
+
 try:
     import yourbase_plugin
 
     if yourbase_plugin.AVAILABLE:
         ENABLED = True
-        from coverage.control import Plugins
         from coverage import Coverage
         from coverage.config import CoverageConfig
 
@@ -41,28 +59,15 @@ try:
         cconf = CoverageConfig()
         cconf.data_file = None
         CTX.set_option("run:plugins", ["yourbase_plugin"])
-        print("[YB] Acceleration plugin available!")
         config = YourBaseAccelerationConfig("yourbase_plugin", {})
-        print("[YB] Loading plugin!")
-        plugins = Plugins.load_plugins(["yourbase_plugin"], config)
-        print("[YB] Starting Python acceleration engine")
+        logger.info("Starting Python acceleration engine")
         CTX.start()
-        p = CTX._plugins
-        PLUGIN = p.get("yourbase_plugin.YourBasePlugin")
+        PLUGIN = CTX._plugins.get("yourbase_plugin.YourBasePlugin")
+        atexit.register(shutdown_acceleration, None, None)
 
-except:
-    import traceback
-
-    print("[YB] Problem initializing acceleration subsystem")
-    ENABLED = False
-    traceback.print_exc()
-
-
-def shutdown_acceleration(self, *args, **kwargs):
-    if CTX and PLUGIN:
-        print("[YB] Processing acceleration data")
-        PLUGIN.dump_graph()
-        CTX.stop()
+except Exception as e:
+    logger.info("Not running on YourBase CI, build won't be accelerated")
+    logger.debug(f"  because {e}")
 
 
 def skip_when_possible(func):
@@ -73,7 +78,7 @@ def skip_when_possible(func):
             fname = "%s" % (func.__qualname__)
             fpath = os.getcwd() + os.sep + inspect.getfile(func)
             if PLUGIN.can_skip(fpath, fname):
-                print("[YB] Skipping %s (@ %s)" % (fname, fpath))
+                logger.info("Skipping %s (@ %s)" % (fname, fpath))
             else:
                 PLUGIN.start_test(fpath, fname)
                 func(*args, **kwargs)
