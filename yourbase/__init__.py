@@ -17,24 +17,6 @@ else:
 # yourbase.pytest does not need to be imported here; it is loaded via our
 # setup.py -> entry_points dict
 
-
-class YourBaseAccelerationConfig(object):
-    """A fake config for use in tests."""
-
-    def __init__(self, plugin, options):
-        self.plugin = plugin
-        self.options = options
-        self.asked_for = []
-
-    def get_plugin_options(self, module):
-        """Just return the options for `module` if this is the right module."""
-        self.asked_for.append(module)
-        if module == self.plugin:
-            return self.options
-        else:
-            return {}
-
-
 CTX = None
 ENABLED = False
 PLUGIN = None
@@ -59,7 +41,6 @@ try:
         cconf = CoverageConfig()
         cconf.data_file = None
         CTX.set_option("run:plugins", ["yourbase_plugin"])
-        config = YourBaseAccelerationConfig("yourbase_plugin", {})
         logger.info("Starting Python acceleration engine")
         CTX.start()
         PLUGIN = CTX._plugins.get("yourbase_plugin.YourBasePlugin")

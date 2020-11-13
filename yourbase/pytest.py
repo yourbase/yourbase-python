@@ -12,7 +12,7 @@ import inspect
 import os
 import yourbase
 
-from typing import List
+from typing import List, Optional
 
 if yourbase.ENABLED:
     try:
@@ -21,10 +21,26 @@ if yourbase.ENABLED:
         print("[YB] pytest found, attaching")
         from . import skip_when_possible
 
-        atexit.register(yourbase.shutdown_acceleration, None, None)
+        def pytest_collection_modifyitems(items: List[pytest.Item]) -> None:
+            """
+            Called by pytest after tests are collected but before they start
+            to run. `items` is mutable.
 
-        def pytest_collection_modifyitems(items: List[pytest.Item]):
-            if yourbase.PLUGIN is None:
+            Modern pytest's signature for this function is
+            `pytest_collection_modifyitems(session, config, items)`, but
+            pytest will check argument names before calling it and call with
+            exactly the right arguments so that plugins gain forward
+            compaitibility for free.
+
+            For this reason, we shouldn't update this function signature to
+            the modern version until we need something from it, as it would
+            potentially break compatibility with older pytest versions. We
+            also should not rename the arguments as this would prevent pytest
+            from identifying them and cause it to error.
+
+            For more information, see: https://github.com/pytest-dev/pytest/blob/991bc7bd50772b0ae1f40b5f821f7e67745d1b2e/doc/en/writing_plugins.rst#hook-function-validation-and-execution
+            """
+            if not yourbase.PLUGIN:
                 return
 
             for item in items:
@@ -36,8 +52,12 @@ if yourbase.ENABLED:
                         pytest.mark.skip(reason="[YB] No dependencies changed ✨")
                     )
 
-        def pytest_runtest_setup(item: pytest.Item):
-            if yourbase.PLUGIN is None:
+        def pytest_runtest_setup(item: pytest.Item) -> None:
+            """
+            Called by pytest before a single test is about to be run. This
+            function is NOT called if the test is marked for skipping.
+            """
+            if not yourbase.PLUGIN:
                 return
 
             fname = "%s" % (item.function.__qualname__)
@@ -45,8 +65,15 @@ if yourbase.ENABLED:
 
             yourbase.PLUGIN.start_test(fpath, fname)
 
-        def pytest_runtest_teardown(item: pytest.Item):
-            if yourbase.PLUGIN is None:
+        # TODO: This is called even when the test is skipped. Maybe check pytest to see if this is intended.
+        def pytest_runtest_teardown(
+            item: pytest.Item, nextitem: Optional[pytest.Item]
+        ) -> None:
+            """
+            Called by pytest after a single test has been run. This function
+            IS called even if the test was skipped.
+            """
+            if not yourbase.PLUGIN:
                 return
 
             fname = "%s" % (item.function.__qualname__)
