@@ -48,6 +48,11 @@ accelerated.
 [pytest]: https://pytest.org
 [unittest]: https://docs.python.org/3/library/unittest.html
 
+## Known issues
+`yourbase-python` has a silent logical conflict with `pytest-cov`; tests will
+skip when they should not be skipped if `pytest-cov` is installed. (`pytest`
+and `coverage` independently are fine.)
+
 ## Contributing
 This open source package is a lightweight wrapper for your code that plugs it
 into the more complex proprietary systems powering YourBase CI servers. We
