@@ -24,7 +24,6 @@ PLUGIN = None
 
 def shutdown_acceleration(self, *args, **kwargs):
     if CTX and PLUGIN:
-        logger.info("Processing acceleration data")
         PLUGIN.dump_graph()
         CTX.stop()
 
